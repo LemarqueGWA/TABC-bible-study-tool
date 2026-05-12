@@ -983,6 +983,11 @@
         page-break-after: avoid !important;
         break-after: avoid !important;
       }
+      /* Forced page breaks (set on specific sections via onclone) */
+      .pdf-page-break {
+        page-break-before: always !important;
+        break-before: page !important;
+      }
     `;
 
     // Expand textareas so all typed content is visible
@@ -1016,6 +1021,18 @@
             clonedDoc.body.style.minWidth = '820px';
             clonedDoc.body.style.margin = '0';
             clonedDoc.body.style.padding = '0';
+
+            // Force the page layout:
+            //   Page 1 → Section 1
+            //   Page 2 → Sections 2 + 3
+            //   Page 3 → Sections 4 + 5 + summary banner
+            // We tag section 2 (index 1) and section 4 (index 3) with a class
+            // that gets `page-break-before: always`, so the algorithm starts
+            // fresh pages there. Everything between those breaks packs onto
+            // the same page naturally.
+            const sections = clonedDoc.querySelectorAll('.section');
+            if (sections[1]) sections[1].classList.add('pdf-page-break');
+            if (sections[3]) sections[3].classList.add('pdf-page-break');
           }
         },
         jsPDF: {
@@ -1024,11 +1041,12 @@
           orientation: 'portrait',
           compress:    true
         },
-        // Match the avoid list with CSS — only atomic blocks.
-        // Sections themselves flow freely so they pack across pages cleanly.
+        // before: forces a fresh page at marked sections
+        // avoid:  only marks small atomic blocks so larger elements pack freely
         pagebreak: {
-          mode:  ['css', 'legacy'],
-          avoid: '.subsection, .observe-cell, .labeled-field, .principle-box, .summary-banner, .checklist, .section-header, .header-fields, .passage-ref-row'
+          mode:   ['css', 'legacy'],
+          before: '.pdf-page-break',
+          avoid:  '.subsection, .observe-cell, .labeled-field, .principle-box, .summary-banner, .checklist, .section-header, .header-fields, .passage-ref-row'
         }
       }).from(page).save();
     } catch (err) {
