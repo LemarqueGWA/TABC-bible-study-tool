@@ -516,84 +516,11 @@
     .summary-banner .arrow { display: none; }
   }
  
-  /* ── ── ── PDF EXPORT (force desktop layout) ── ── ── ── */
-  /* Applied temporarily during html2pdf rendering so the PDF
-     looks the same regardless of device viewport. */
-  body.pdf-export {
-    background: #fff !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    width: 820px !important;
-    min-width: 820px !important;
-    max-width: 820px !important;
-    overflow: visible !important;
-  }
-  body.pdf-export .page {
-    max-width: 780px !important;
-    width: 780px !important;
-    padding: 2rem 2.5rem 2.5rem !important;
-    margin: 20px auto !important;
-    border: 1px solid #b8a878 !important;
-    box-shadow: none !important;
-    overflow: visible !important;
-  }
-  /* Hide bottom corner bracket — sits at end of a very long element and looks misplaced */
-  body.pdf-export .page::before { display: block !important; }
-  body.pdf-export .page::after  { display: none !important; }
-  body.pdf-export .print-bar { display: none !important; }
- 
-  body.pdf-export .header-fields {
-    grid-template-columns: 2fr 1fr 1fr !important;
-    padding: 1rem 1.25rem !important;
-    gap: .85rem !important;
-  }
-  body.pdf-export .header-fields .field-group:first-child { grid-column: auto !important; }
-  body.pdf-export .observe-grid,
-  body.pdf-export .two-col,
-  body.pdf-export .prayer-grid { grid-template-columns: 1fr 1fr !important; gap: .75rem !important; }
-  body.pdf-export .checklist { grid-template-columns: repeat(3, 1fr) !important; }
- 
-  /* Keep the summary banner on one line — wrapping caused page-break orphans */
-  body.pdf-export .summary-banner {
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    text-align: left !important;
-    font-size: .55rem !important;
-    padding: .85rem 1rem !important;
-    gap: .3rem !important;
-  }
-  body.pdf-export .summary-banner span { white-space: nowrap !important; }
-  body.pdf-export .summary-banner .arrow { display: inline !important; }
- 
-  body.pdf-export .masthead h1 { font-size: 2rem !important; }
- 
-  body.pdf-export .passage-ref-row { padding: .55rem 1.25rem .7rem !important; }
- 
-  /* Show all typed content (no scrollbars) and prevent text overflow */
-  body.pdf-export textarea {
-    overflow: visible !important;
-    height: auto !important;
-    min-height: 40px !important;
-    word-wrap: break-word !important;
-    white-space: pre-wrap !important;
-  }
-  body.pdf-export input[type="text"],
-  body.pdf-export input[type="date"] {
-    font-size: 1rem !important;
-  }
- 
-  /* Encourage page breaks AROUND sections, never inside them */
-  body.pdf-export .section,
-  body.pdf-export .principle-box,
-  body.pdf-export .summary-banner,
-  body.pdf-export .subsection,
-  body.pdf-export .header-fields,
-  body.pdf-export .passage-ref-row {
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
-  }
+  /* ── ── ── PDF EXPORT ────────────────────────────────────
+     Desktop-layout overrides for PDF rendering are injected into the
+     cloned document via html2canvas' onclone() hook (see downloadPDF
+     in script). This avoids issues where mobile @media queries fire
+     during canvas rendering despite windowWidth being set.            */
  
   /* ── ── ── PRINT STYLES ── ── ── ── ── ── ── ── ── ── ── */
   @media print {
@@ -936,43 +863,118 @@
     btn.disabled = true;
     btn.textContent = 'Generating PDF…';
  
-    // Build a filename from passage + date if available
     const passage = (document.getElementById('passage').value || 'study').trim().replace(/[^\w\s.-]/g,'').replace(/\s+/g,'-');
     const date    = document.getElementById('study-date').value || new Date().toISOString().slice(0,10);
     const filename = `bible-study_${passage}_${date}.pdf`;
  
-    // Force desktop layout while rendering
-    document.body.classList.add('pdf-export');
+    // Mobile browsers ignore html2canvas' windowWidth, so mobile @media queries still fire
+    // during rendering. We inject a stylesheet into the CLONED document via onclone() that
+    // overrides every mobile-only rule with non-media-query !important versions, then force
+    // body to a fixed desktop width. This is the only reliable cross-device fix.
+    const PDF_OVERRIDE_CSS = `
+      html, body {
+        width: 820px !important;
+        min-width: 820px !important;
+        max-width: 820px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        background: #fff !important;
+        overflow: visible !important;
+      }
+      .page {
+        max-width: 780px !important;
+        width: 780px !important;
+        padding: 2rem 2.5rem 2.5rem !important;
+        margin: 12px auto !important;
+        border: 1px solid #b8a878 !important;
+        box-shadow: none !important;
+        overflow: visible !important;
+      }
+      .page::before { display: block !important; }
+      .page::after  { display: none  !important; }
+      .print-bar    { display: none  !important; }
+      .header-fields {
+        display: grid !important;
+        grid-template-columns: 2fr 1fr 1fr !important;
+        gap: .85rem !important;
+        padding: 1rem 1.25rem !important;
+      }
+      .header-fields .field-group:first-child { grid-column: auto !important; }
+      .observe-grid, .two-col, .prayer-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: .75rem !important;
+      }
+      .checklist {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+      }
+      .summary-banner {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        text-align: left !important;
+        font-size: .55rem !important;
+        padding: .8rem 1rem !important;
+        gap: .25rem !important;
+      }
+      .summary-banner span { white-space: nowrap !important; overflow: hidden !important; }
+      .summary-banner .arrow { display: inline !important; }
+      .masthead h1 { font-size: 2rem !important; }
+      .passage-ref-row { padding: .55rem 1.25rem .7rem !important; }
+      textarea {
+        overflow: visible !important;
+        height: auto !important;
+        min-height: 40px !important;
+        word-wrap: break-word !important;
+        white-space: pre-wrap !important;
+        font-size: 14px !important;
+      }
+      input[type="text"], input[type="date"] { font-size: 14px !important; }
+      .section, .principle-box, .summary-banner, .subsection,
+      .header-fields, .passage-ref-row {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+    `;
  
-    // Save current scroll & scroll to top so html2canvas captures from origin
-    const savedScrollY = window.scrollY;
-    const savedScrollX = window.scrollX;
-    window.scrollTo(0, 0);
- 
-    // Expand every textarea to fit its full content (so nothing is hidden by scrollbars)
+    // Expand textareas so all typed content is visible
     document.querySelectorAll('textarea').forEach(t => {
       t.style.height = 'auto';
       t.style.height = Math.max(t.scrollHeight, 40) + 'px';
     });
  
-    // Two animation frames to ensure layout settles
     await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-    await new Promise(r => setTimeout(r, 50));
  
     try {
       await html2pdf().set({
-        margin:    [8, 8, 8, 8],            // smaller margin → more usable area
+        margin:    [8, 8, 8, 8],
         filename:  filename,
         image:     { type: 'jpeg', quality: 0.96 },
         html2canvas: {
           scale:           2,
           useCORS:         true,
           backgroundColor: '#faf6ee',
-          width:           820,             // explicit canvas width (matches body.pdf-export)
-          windowWidth:     820,             // simulated viewport width for media queries
+          width:           820,
+          windowWidth:     820,
           scrollX:         0,
           scrollY:         0,
-          logging:         false
+          logging:         false,
+          // Inject our override CSS into the cloned document *before* it renders.
+          // This is the key fix — it bypasses mobile media-query effects entirely.
+          onclone: (clonedDoc) => {
+            const style = clonedDoc.createElement('style');
+            style.textContent = PDF_OVERRIDE_CSS;
+            clonedDoc.head.appendChild(style);
+            // Belt-and-suspenders: also force inline width on html & body in the clone
+            clonedDoc.documentElement.style.width = '820px';
+            clonedDoc.body.style.width = '820px';
+            clonedDoc.body.style.minWidth = '820px';
+            clonedDoc.body.style.margin = '0';
+            clonedDoc.body.style.padding = '0';
+          }
         },
         jsPDF: {
           unit:        'mm',
@@ -980,15 +982,11 @@
           orientation: 'portrait',
           compress:    true
         },
-        // 'avoid-all' adds page-break-inside:avoid to every element via JS,
-        // giving cleaner pagination than the default canvas slicing
         pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
       }).from(page).save();
     } catch (err) {
       alert('Could not generate PDF: ' + err.message);
     } finally {
-      document.body.classList.remove('pdf-export');
-      window.scrollTo(savedScrollX, savedScrollY);
       btn.disabled = false;
       btn.textContent = originalLabel;
     }
