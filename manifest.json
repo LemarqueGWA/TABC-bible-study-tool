@@ -1,0 +1,15 @@
+{
+  "name": "Bible Study Worksheet",
+  "short_name": "BibleStudy",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#faf6ee",
+  "theme_color": "#8b6914",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2903/2903531.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
