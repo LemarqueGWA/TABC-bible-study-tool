@@ -6,7 +6,6 @@
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js');
   }
-</script>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Short Bible Study Worksheet</title>
@@ -966,10 +965,13 @@
       .summary-banner span { white-space: nowrap !important; overflow: hidden !important; }
       .summary-banner .arrow { display: inline !important; opacity: .45 !important; }
 
-      /* Avoid breaking inside these specific elements */
-      .section, .principle-box, .summary-banner, .subsection,
-      .header-fields, .passage-ref-row, .observe-grid,
-      .two-col, .prayer-grid, .checklist {
+      /* Avoid breaking inside ONLY small atomic blocks.
+         Larger compound elements (sections, grids) are allowed to flow
+         across pages — this is what enables clean packing without
+         empty pages padding-out the canvas. */
+      .subsection, .observe-cell, .labeled-field,
+      .principle-box, .summary-banner, .checklist,
+      .section-header, .header-fields, .passage-ref-row {
         page-break-inside: avoid !important;
         break-inside: avoid !important;
       }
@@ -990,7 +992,7 @@
 
     try {
       await html2pdf().set({
-        margin:    [8, 8, 12, 8],            // a little extra bottom margin so banner always has room
+        margin:    [8, 8, 10, 8],
         filename:  filename,
         image:     { type: 'jpeg', quality: 0.96 },
         html2canvas: {
@@ -1019,11 +1021,11 @@
           orientation: 'portrait',
           compress:    true
         },
-        // 'css' mode respects our explicit page-break rules; 'legacy' is the canvas-slice fallback.
-        // We dropped 'avoid-all' because it was over-aggressive and created big empty pages.
+        // Match the avoid list with CSS — only atomic blocks.
+        // Sections themselves flow freely so they pack across pages cleanly.
         pagebreak: {
           mode:  ['css', 'legacy'],
-          avoid: '.section, .principle-box, .summary-banner, .subsection, .header-fields, .passage-ref-row, .observe-grid, .two-col, .prayer-grid, .checklist'
+          avoid: '.subsection, .observe-cell, .labeled-field, .principle-box, .summary-banner, .checklist, .section-header, .header-fields, .passage-ref-row'
         }
       }).from(page).save();
     } catch (err) {
