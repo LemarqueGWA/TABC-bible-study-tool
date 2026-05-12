@@ -17,9 +17,9 @@
   <style>
     /* ── Variables ────────────────────────────────────────── */
     :root {
-      --cream:    #faf6ee;
+      --cream:   #faf6ee;
       --parchment: #f0e9d6;
-      --ink:      #1c1a16;
+      --ink:     #1c1a16;
       --ink-mid: #3e3a30;
       --ink-light: #7a7260;
       --gold:    #8b6914;
@@ -56,73 +56,57 @@
       position: relative;
     }
 
-    /* ── Print button (screen only) ───────────────────────── */
-    .print-bar {
-      display: flex;
-      justify-content: flex-end;
-      gap: .75rem;
-      margin-bottom: 1.75rem;
+    /* Decorative corners */
+    .page::before, .page::after {
+      content: ''; position: absolute; width: 48px; height: 48px; border-color: var(--gold); border-style: solid;
     }
-    .btn {
-      font-family: 'Cinzel', serif;
-      font-size: .72rem;
-      padding: .55rem 1.3rem;
-      border: 1.5px solid var(--gold);
-      background: transparent;
-      color: var(--gold);
-      cursor: pointer;
-    }
+    .page::before { top: 18px; left: 18px; border-width: 2px 0 0 2px; }
+    .page::after  { bottom: 18px; right: 18px; border-width: 0 2px 2px 0; }
+
+    /* ── Print bar ───────────────────────── */
+    .print-bar { display: flex; justify-content: flex-end; gap: .75rem; margin-bottom: 1.75rem; }
+    .btn { font-family: 'Cinzel', serif; font-size: .72rem; padding: .55rem 1.3rem; border: 1.5px solid var(--gold); background: transparent; color: var(--gold); cursor: pointer; transition: 0.2s; }
+    .btn:hover { background: var(--gold); color: #fff; }
     .btn.primary { background: var(--gold); color: #fff; }
 
     /* ── Masthead ─────────────────────────────────────────── */
     .masthead { text-align: center; border-bottom: 2px solid var(--rule); padding-bottom: 1.5rem; margin-bottom: 1.75rem; }
-    .masthead h1 { font-family: 'Playfair Display', serif; font-size: 2.1rem; }
-    .masthead-eyebrow { font-family: 'Cinzel', serif; color: var(--gold); letter-spacing: .22em; text-transform: uppercase; }
+    .masthead-eyebrow { font-family: 'Cinzel', serif; font-size: .68rem; color: var(--gold); letter-spacing: .22em; text-transform: uppercase; }
+    .masthead h1 { font-family: 'Playfair Display', serif; font-size: 2.1rem; font-weight: 700; color: var(--ink); line-height: 1.15; }
+    .ornament { margin: .6rem 0 0; color: var(--gold-lt); font-size: 1.1rem; letter-spacing: .5em; }
 
-    /* ── Header fields ────────────────────────────────────── */
-    .header-fields {
-      display: grid;
-      grid-template-columns: 2fr 1fr 1fr;
-      gap: 1rem;
-      margin-bottom: .75rem;
-      padding: 1.2rem 1.5rem;
-      background: var(--section-bg);
-      border: 1px solid var(--rule);
-    }
-    .field-group label { display: block; font-family: 'Cinzel', serif; font-size: .62rem; color: var(--ink-light); }
-    .field-group input { width: 100%; border: none; border-bottom: 1.5px solid var(--input-border); background: var(--input-bg); padding: .3rem; }
+    /* ── Layout Elements ─────────────────────────────────── */
+    .header-fields { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1rem; margin-bottom: .75rem; padding: 1.2rem 1.5rem; background: var(--section-bg); border: 1px solid var(--rule); }
+    .field-group label { display: block; font-family: 'Cinzel', serif; font-size: .62rem; color: var(--ink-light); text-transform: uppercase; margin-bottom: .35rem; }
+    .field-group input { width: 100%; background: var(--input-bg); border: none; border-bottom: 1.5px solid var(--input-border); padding: .3rem; font-family: 'EB Garamond', serif; font-size: 1rem; }
 
-    /* ── Sections ─────────────────────────────────────────── */
-    .section { margin-bottom: 2.5rem; }
+    .section { margin-bottom: 2rem; break-inside: avoid; }
     .section-header { display: flex; align-items: center; gap: .9rem; margin-bottom: 1.1rem; padding-bottom: .5rem; border-bottom: 1.5px solid var(--rule); }
-    .section-num { background: var(--gold); color: #fff; width: 1.6rem; height: 1.6rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Cinzel', serif; }
-    .section-title { font-family: 'Playfair Display', serif; font-weight: 700; color: var(--accent); }
+    .section-num { font-family: 'Cinzel', serif; font-size: .68rem; color: #fff; background: var(--gold); width: 1.6rem; height: 1.6rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; color: var(--accent); }
 
-    /* ── Grids and Inputs ─────────────────────────────────── */
+    .subsection-title { font-family: 'Cinzel', serif; font-size: .65rem; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); margin-bottom: .55rem; }
     .observe-grid, .two-col, .prayer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
-    .subsection { margin-bottom: 1.5rem; }
-    .subsection-title { font-family: 'Cinzel', serif; font-size: .65rem; color: var(--gold); margin-bottom: .55rem; text-transform: uppercase; }
-    
-    textarea { width: 100%; background: var(--input-bg); border: 1px solid var(--input-border); padding: .55rem; font-family: 'EB Garamond', serif; font-size: 1rem; resize: vertical; min-height: 60px; }
-    .principle-box { border: 2px solid var(--gold); padding: 1rem; background: var(--section-bg); margin-bottom: 1rem; }
 
+    textarea { width: 100%; background: var(--input-bg); border: 1px solid var(--input-border); padding: .55rem; font-family: 'EB Garamond', serif; font-size: 1rem; line-height: 1.65; min-height: 60px; resize: vertical; }
+    .principle-box { border: 2px solid var(--gold); padding: 1rem 1.2rem; background: var(--section-bg); margin-bottom: 1rem; }
     .checklist { display: grid; grid-template-columns: repeat(3, 1fr); gap: .4rem; font-size: .85rem; }
-    .summary-banner { margin-top: 2rem; background: var(--accent); color: #f0e9d6; padding: 1.1rem; display: flex; justify-content: space-between; font-family: 'Cinzel', serif; font-size: .7rem; }
 
-    /* ── Mobile ───────────────────────────────────────────── */
-    @media (max-width: 768px) {
-      .header-fields, .observe-grid, .two-col, .prayer-grid { grid-template-columns: 1fr; }
-      .checklist { grid-template-columns: 1fr; }
-    }
+    .summary-banner { margin-top: 2rem; background: var(--accent); color: #f0e9d6; padding: 1.1rem 1.75rem; display: flex; justify-content: space-between; align-items: center; font-family: 'Cinzel', serif; font-size: .7rem; }
 
-    @media print {
-      .print-bar { display: none !important; }
+    /* ── Passage Chip ── */
+    .passage-ref-row { margin: -.5rem 0 1.5rem 0; padding: .6rem 1.5rem .75rem; background: var(--section-bg); border: 1px solid var(--rule); border-top: none; }
+    .passage-ref-chip { font-family: 'EB Garamond', serif; font-style: italic; color: var(--accent); border-bottom: 1.5px dashed var(--gold-lt); text-decoration: none; cursor: pointer; }
+
+    /* ── Mobile Overrides ── */
+    @media (max-width: 600px) {
+      .header-fields, .observe-grid, .two-col, .prayer-grid, .checklist { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
-<div class="page">
+<div class="page" id="study-page">
   <div class="print-bar">
     <button class="btn" onclick="clearAll()">Clear All</button>
     <button class="btn primary" id="pdf-btn" onclick="downloadPDF()">⎙ &nbsp;Download PDF</button>
@@ -131,13 +115,13 @@
   <div class="masthead">
     <p class="masthead-eyebrow">Personal Bible Study</p>
     <h1>Short <em>Bible Study</em> Worksheet</h1>
-    <p style="color:var(--gold-lt); margin-top:.5rem;">✦ &nbsp; ✦ &nbsp; ✦</p>
+    <p class="ornament">✦ &nbsp; ✦ &nbsp; ✦</p>
   </div>
 
   <div class="header-fields">
     <div class="field-group">
       <label>Passage</label>
-      <input type="text" id="passage" placeholder="e.g. John 3:1–21" />
+      <input type="text" id="passage" placeholder="e.g. John 3:1–21" oninput="updatePassageRef()" />
     </div>
     <div class="field-group">
       <label>Date</label>
@@ -149,23 +133,30 @@
     </div>
   </div>
 
+  <div class="passage-ref-row" id="passage-ref-row" style="display:none">
+    <a class="passage-ref-chip" id="passage-ref-chip" href="#" target="_blank" rel="noopener"></a>
+    <span style="font-family:'Cinzel'; font-size:.58rem; color:var(--ink-light); margin-left: 10px;">↑ Click to read on read.lsbible.org</span>
+  </div>
+
   <div class="section">
     <div class="section-header">
       <span class="section-num">1</span>
       <span class="section-title">Read the Passage Carefully</span>
     </div>
     <div class="subsection">
-      <p class="subsection-title">Observe the Text</p>
+      <p class="subsection-title">Observe the Text — note what you see</p>
       <div class="observe-grid">
-        <textarea id="obs-repeated" placeholder="Repeated words/phrases..."></textarea>
-        <textarea id="obs-commands" placeholder="Commands or instructions..."></textarea>
+        <textarea id="obs-repeated" placeholder="Repeated words / phrases…"></textarea>
+        <textarea id="obs-commands" placeholder="Commands or instructions…"></textarea>
+        <textarea id="obs-contrasts" placeholder="Contrasts…"></textarea>
+        <textarea id="obs-terms" placeholder="Theological terms…"></textarea>
       </div>
     </div>
     <div class="subsection">
-      <p class="subsection-title">Identify Verbs & Nouns</p>
+      <p class="subsection-title">Identify Verbs &amp; Nouns</p>
       <div class="two-col">
-        <textarea id="verbs" placeholder="Verbs - What is happening?"></textarea>
-        <textarea id="nouns" placeholder="Nouns - Truths/Doctrines..."></textarea>
+        <textarea id="verbs" placeholder="Verbs — What is happening?"></textarea>
+        <textarea id="nouns" placeholder="Nouns — What is being given?"></textarea>
       </div>
     </div>
   </div>
@@ -175,7 +166,11 @@
       <span class="section-num">2</span>
       <span class="section-title">Understand the Meaning</span>
     </div>
-    <textarea id="interpret" style="min-height:100px;" placeholder="Your interpretation..."></textarea>
+    <textarea id="interpret" style="min-height: 100px;" placeholder="Your interpretation of the passage…"></textarea>
+    <div class="two-col" style="margin-top: 1rem;">
+      <textarea id="main-truth" placeholder="The central idea…"></textarea>
+      <textarea id="cross-refs" placeholder="Cross-references…"></textarea>
+    </div>
   </div>
 
   <div class="section">
@@ -184,12 +179,12 @@
       <span class="section-title">Identify the Central Principle</span>
     </div>
     <div class="principle-box">
-      <textarea id="principle" placeholder="The timeless truth of this passage is..."></textarea>
+      <textarea id="principle" placeholder="The timeless truth of this passage is…"></textarea>
     </div>
     <div class="checklist">
       <label><input type="checkbox"> Timeless Truth</label>
       <label><input type="checkbox"> Accurate to Text</label>
-      <label><input type="checkbox"> Not Opinion</label>
+      <label><input type="checkbox"> Applies to All</label>
     </div>
   </div>
 
@@ -202,6 +197,7 @@
       <textarea id="believe" placeholder="What must I believe?"></textarea>
       <textarea id="do" placeholder="What must I do?"></textarea>
     </div>
+    <textarea id="action-step" style="margin-top:1rem;" placeholder="One clear, practical action step…"></textarea>
   </div>
 
   <div class="section">
@@ -210,8 +206,8 @@
       <span class="section-title">Respond to God in Prayer</span>
     </div>
     <div class="prayer-grid">
-      <textarea id="pray-thank" placeholder="Lord, thank you for..."></textarea>
-      <textarea id="pray-ask" placeholder="Lord, help me to..."></textarea>
+      <textarea id="pray-thank" placeholder="Lord, thank you for…"></textarea>
+      <textarea id="pray-ask" placeholder="Lord, help me to…"></textarea>
     </div>
   </div>
 
@@ -225,38 +221,60 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js"></script>
 
 <script>
-  // Set default date
+  // Default Date 
   document.getElementById('study-date').value = new Date().toISOString().slice(0,10);
 
   function clearAll() {
-    if (confirm('Start fresh?')) {
-      document.querySelectorAll('textarea, input[type="text"]').forEach(el => el.value = '');
-      document.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
-    }
+    if (!confirm('Clear all fields?')) return;
+    document.querySelectorAll('textarea, input[type="text"]').forEach(el => el.value = '');
+    document.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
+  }
+
+  function updatePassageRef() {
+    const val = document.getElementById('passage').value.trim();
+    const row = document.getElementById('passage-ref-row');
+    const chip = document.getElementById('passage-ref-chip');
+    if (!val) { row.style.display = 'none'; return; }
+    chip.textContent = val;
+    chip.href = 'https://read.lsbible.org/?q=' + encodeURIComponent(val);
+    row.style.display = 'block';
   }
 
   async function downloadPDF() {
     const btn = document.getElementById('pdf-btn');
-    const element = document.querySelector('.page');
-    btn.textContent = 'Generating...';
+    const page = document.getElementById('study-page');
+    btn.textContent = 'Generating PDF…';
+
+    const PDF_OVERRIDE_CSS = `
+      html, body { width: 800px !important; background: #fff !important; }
+      .page { width: 800px !important; padding: 40px !important; margin: 0 !important; border: none !important; box-shadow: none !important; }
+      .print-bar { display: none !important; }
+      .observe-grid, .two-col, .prayer-grid { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 15px !important; }
+      .checklist { display: grid !important; grid-template-columns: 1fr 1fr 1fr !important; }
+      textarea { height: auto !important; min-height: 50px !important; border: 1px solid #c8b98a !important; }
+      .section { page-break-inside: avoid !important; }
+    `;
 
     const opt = {
-      margin: [10, 10, 15, 10],
-      filename: 'bible-study.pdf',
+      margin: [10, 10],
+      filename: 'Bible_Study_Worksheet.pdf',
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, width: 800, windowWidth: 800 },
+      html2canvas: { scale: 2, useCORS: true, width: 800, windowWidth: 800, onclone: (doc) => {
+        const style = doc.createElement('style');
+        style.textContent = PDF_OVERRIDE_CSS;
+        doc.head.appendChild(style);
+      }},
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      pagebreak: { mode: ['css', 'legacy'], avoid: ['.section', '.principle-box', '.subsection'] }
+      pagebreak: { mode: ['css', 'legacy'], avoid: ['.section', '.principle-box'] }
     };
 
     try {
-      await html2pdf().set(opt).from(element).save();
-    } catch (e) {
-      alert("Error generating PDF");
+      await html2pdf().set(opt).from(page).save();
     } finally {
       btn.textContent = '⎙ Download PDF';
     }
   }
 </script>
+
 </body>
 </html>
