@@ -915,17 +915,19 @@
 
       .passage-ref-row { padding: .45rem 1.1rem .55rem !important; margin-bottom: 1rem !important; }
 
-      /* Tight inter-section spacing — only matters between siblings on the
-         same page (sections 2→3 and 4→5). Sections before forced page
-         breaks don't visually use their margin-bottom. */
-      .section { margin-bottom: .45rem !important; }
+      /* Zero margin between sections — gaps on shared pages were the
+         "blank space" complaint. Combined with bigger textareas below
+         (real writing room), pages now fill naturally. */
+      .section { margin-bottom: 0 !important; }
       .section-header {
-        margin-bottom: .55rem !important;
+        margin-top: .5rem !important;
+        margin-bottom: .5rem !important;
         padding-bottom: .3rem !important;
         gap: .75rem !important;
       }
-      .subsection { margin-bottom: .6rem !important; }
-      .subsection-title { margin-bottom: .3rem !important; }
+      .subsection { margin-bottom: .55rem !important; }
+      .subsection-title { margin-bottom: .35rem !important; }
+      .subsection:last-child { margin-bottom: 0 !important; }
 
       .observe-grid, .two-col, .prayer-grid {
         display: grid !important;
@@ -940,19 +942,25 @@
 
       .principle-box {
         padding: .7rem .95rem !important;
-        margin-bottom: .75rem !important;
+        margin-bottom: .55rem !important;
       }
 
-      /* Compact textareas — auto-expand handled in JS before render */
+      /* Real writing room — textareas sized by their original class
+         so the visual hierarchy is preserved and pages fill cleanly. */
       textarea {
         overflow: visible !important;
         height: auto !important;
-        min-height: 38px !important;
         word-wrap: break-word !important;
         white-space: pre-wrap !important;
         font-size: 13.5px !important;
-        padding: .4rem .5rem !important;
+        padding: .45rem .55rem !important;
       }
+      textarea.sm { min-height: 70px !important; }
+      textarea.md { min-height: 92px !important; }
+      textarea.lg { min-height: 115px !important; }
+      textarea.xl { min-height: 140px !important; }
+      /* Default for any textarea without a size class (principle, action step) */
+      textarea:not(.sm):not(.md):not(.lg):not(.xl) { min-height: 80px !important; }
       input[type="text"], input[type="date"] { font-size: 13.5px !important; }
 
       /* Summary banner — kept compact so it always fits remaining page space */
@@ -996,7 +1004,14 @@
     // Expand textareas so all typed content is visible
     document.querySelectorAll('textarea').forEach(t => {
       t.style.height = 'auto';
-      t.style.height = Math.max(t.scrollHeight, 38) + 'px';
+      // floor matches the per-class min-heights in PDF_OVERRIDE_CSS
+      const cls   = t.classList;
+      const floor = cls.contains('xl') ? 140
+                  : cls.contains('lg') ? 115
+                  : cls.contains('md') ?  92
+                  : cls.contains('sm') ?  70
+                  :                       80;
+      t.style.height = Math.max(t.scrollHeight, floor) + 'px';
     });
 
     await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
