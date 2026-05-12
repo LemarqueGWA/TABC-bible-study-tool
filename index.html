@@ -915,14 +915,17 @@
 
       .passage-ref-row { padding: .45rem 1.1rem .55rem !important; margin-bottom: 1rem !important; }
 
-      .section { margin-bottom: 1.2rem !important; }
+      /* Tight inter-section spacing — only matters between siblings on the
+         same page (sections 2→3 and 4→5). Sections before forced page
+         breaks don't visually use their margin-bottom. */
+      .section { margin-bottom: .45rem !important; }
       .section-header {
-        margin-bottom: .65rem !important;
-        padding-bottom: .35rem !important;
+        margin-bottom: .55rem !important;
+        padding-bottom: .3rem !important;
         gap: .75rem !important;
       }
-      .subsection { margin-bottom: .75rem !important; }
-      .subsection-title { margin-bottom: .35rem !important; }
+      .subsection { margin-bottom: .6rem !important; }
+      .subsection-title { margin-bottom: .3rem !important; }
 
       .observe-grid, .two-col, .prayer-grid {
         display: grid !important;
